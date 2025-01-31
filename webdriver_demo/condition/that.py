@@ -1,5 +1,5 @@
 from selenium.webdriver.remote.webdriver import WebDriver
-from webdriver_demo.commands import elements
+from webdriver_demo.browser import elements
 
 
 def number_of_elements(selector, value: int):

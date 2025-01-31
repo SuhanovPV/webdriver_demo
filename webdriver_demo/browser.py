@@ -1,11 +1,29 @@
 from typing import List
 
 from selenium.common import TimeoutException
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-from webdriver_demo import shared
+from webdriver_demo.custom_wait import Wait
+from selenium.webdriver.remote.webdriver import WebDriver
+
 from webdriver_demo.selector import to_locator
+
+driver: WebDriver = ...
+wait: Wait = ...
+
+
+def assert_(condition):
+    return wait.until(condition)
+
+
+def open(url):
+    driver.get(url)
+
+def back():
+    driver.back()
+
+def quit():
+    driver.quit()
 
 
 def element(selector) -> WebElement:
@@ -15,7 +33,7 @@ def element(selector) -> WebElement:
             raise AssertionError(f'element is not displayed: {webelement.get_attribute("outerHTML")}')
         return webelement
 
-    return shared.wait.until(command)
+    return wait.until(command, message=f'failed to find element by {selector}')
 
 
 def elements(selector) -> List[WebElement]:
@@ -23,7 +41,7 @@ def elements(selector) -> List[WebElement]:
         webelements = driver.find_elements(*to_locator(selector))
         return webelements
 
-    return shared.wait.until(command)
+    return wait.until(command, message=f'failed to find elements by {selector}')
 
 
 def click_on(selector):
@@ -32,7 +50,7 @@ def click_on(selector):
         webelement.click()
         return webelement
 
-    shared.wait.until(command)
+    wait.until(command, message=f'failed to click on element by {selector}')
 
 
 def type_to(selector, value):
@@ -54,4 +72,4 @@ def type_to(selector, value):
         webelement.send_keys(value)
         return webelement
 
-    shared.wait.until(command)
+    wait.until(command, message=f'failed to type {value} in to element by {selector}')
